@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System;
+using System.Collections.Generic;
 
 namespace PadawansTask8
 {
@@ -12,11 +13,12 @@ namespace PadawansTask8
                 throw new ArgumentNullException();
             if (text == "")
                 throw new ArgumentException();
-            text += " ";
+            //text += " ";
             string text2 = "";
             string word ;
             int i = 0;
-            while(i < text.Length)
+            List<string> words = new List<string>();
+            while (i < text.Length)
             {
                 bool wordEnd = false;
                 for(int j = 0; j < symbols.Length; j++)
@@ -25,14 +27,27 @@ namespace PadawansTask8
                         wordEnd = true;
                         break;
                     }
-
+                if (i == text.Length - 1)
+                    wordEnd = true;
                 if (wordEnd)
                 {
-                    word = text.Remove(i);
-                    text2 += text.Remove(i == text.Length - 1 ? i : i + 1);
-                    text = text.Substring( i + 1);
+                    word = i == text.Length - 1 ? text : text.Remove(i);
                     if (word != "")
-                        text = text.Replace(word, "");
+                    {
+                        if (IsWord(word))
+                        {
+                            if (CheckNewWord(word, words))
+                                text2 += i == text.Length - 1 ? text : text.Remove(i + 1);
+                            else
+                                if (!(i == text.Length - 1))    
+                                    text2 +=  text[i];
+                        }
+                        else
+                            text2 += i == text.Length - 1 ? text : text.Remove(  i + 1);
+                    }
+                    else
+                        text2 += text.Remove(1);
+                    text = text.Substring(i + 1);
                     i = 0;
                 }
                 else
@@ -40,6 +55,23 @@ namespace PadawansTask8
             }
             text = text2;
             
+        }
+
+        private static bool IsWord(string s)
+        {
+            for (int i = 0; i < s.Length; i++)
+                if (!((s[i] >= 'a' && s[i] <= 'z') || (s[i] >= 'A' && s[i] <= 'Z')))
+                    return false;
+            return true;
+        }
+
+        private static bool CheckNewWord(string word, List<string> mas)
+        {
+            foreach(string s in mas)
+                if (s == word)
+                    return false;
+            mas.Add(word);
+            return true;
         }
     }
 }
